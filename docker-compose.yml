@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: book_db
+    environment:
+      POSTGRES_USER: book_user
+      POSTGRES_PASSWORD: book_password
+      POSTGRES_DB: book_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/db/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - book_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U book_user -d book_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: book_api
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: book_user
+      DB_PASSWORD: book_password
+      DB_NAME: book_db
+      DB_SSL: "false"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - book_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  book_network:
+    driver: bridge

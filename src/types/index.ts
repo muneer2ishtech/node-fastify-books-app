@@ -1,0 +1,59 @@
+export interface Book {
+  id: bigint;
+  title: string;
+  author: string;
+  year: number;
+  price: string; // Use string for numeric to preserve precision
+  is_active: boolean;
+  description?: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface BookCreateInput {
+  title: string;
+  author: string;
+  year: number;
+  price: number;
+  description?: string;
+  is_active?: boolean;
+}
+
+export interface BookUpdateInput extends Partial<BookCreateInput> {
+  id: bigint;
+}
+
+export interface BookQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  year?: number;
+  author?: string;
+  is_active?: boolean;
+  sort_by?: 'title' | 'author' | 'year' | 'price' | 'created_at';
+  sort_order?: 'asc' | 'desc';
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+  error?: string;
+}
+
+export interface ErrorResponse {
+  success: boolean;
+  error: string;
+  message: string;
+  statusCode: number;
+}
