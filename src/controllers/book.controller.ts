@@ -3,7 +3,7 @@ import bookService from '../services/book.service';
 import { ApiResponse, ErrorResponse } from '../types';
 
 export class BookController {
-  async getAllBooks(request: FastifyRequest, reply: FastifyReply) {
+  getAllBooks = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const queryParams = request.validatedData;
       const result = await bookService.findAll(queryParams);
@@ -18,9 +18,9 @@ export class BookController {
     } catch (error: any) {
       return this.handleError(error, reply);
     }
-  }
+  };
 
-  async getBookById(request: FastifyRequest, reply: FastifyReply) {
+  getBookById = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const { id } = request.validatedData;
       const book = await bookService.findById(id);
@@ -46,9 +46,9 @@ export class BookController {
     } catch (error: any) {
       return this.handleError(error, reply);
     }
-  }
+  };
 
-  async createBook(request: FastifyRequest, reply: FastifyReply) {
+  createBook = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const bookData = request.validatedData;
       const book = await bookService.create(bookData);
@@ -64,9 +64,9 @@ export class BookController {
     } catch (error: any) {
       return this.handleError(error, reply);
     }
-  }
+  };
 
-  async updateBook(request: FastifyRequest, reply: FastifyReply) {
+  updateBook = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const { id, ...updateData } = request.validatedData;
       const book = await bookService.update(id, updateData);
@@ -93,9 +93,9 @@ export class BookController {
     } catch (error: any) {
       return this.handleError(error, reply);
     }
-  }
+  };
 
-  async deleteBook(request: FastifyRequest, reply: FastifyReply) {
+  deleteBook = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const { id } = request.validatedData;
       const deleted = await bookService.delete(id);
@@ -122,9 +122,9 @@ export class BookController {
     } catch (error: any) {
       return this.handleError(error, reply);
     }
-  }
+  };
 
-  async softDeleteBook(request: FastifyRequest, reply: FastifyReply) {
+  softDeleteBook = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const { id } = request.validatedData;
       const updated = await bookService.softDelete(id);
@@ -151,9 +151,9 @@ export class BookController {
     } catch (error: any) {
       return this.handleError(error, reply);
     }
-  }
+  };
 
-  async restoreBook(request: FastifyRequest, reply: FastifyReply) {
+  restoreBook = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const { id } = request.validatedData;
       const restored = await bookService.restore(id);
@@ -180,7 +180,7 @@ export class BookController {
     } catch (error: any) {
       return this.handleError(error, reply);
     }
-  }
+  };
 
   private handleError(error: any, reply: FastifyReply) {
     console.error('Controller error:', error);
