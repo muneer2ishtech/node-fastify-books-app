@@ -1,7 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import bookService from '../services/book.service';
 import { ApiResponse, ErrorResponse } from '../types';
-import { bookCreateSchema, bookUpdateSchema, bookQuerySchema, idParamSchema } from '../middlewares/validation.middleware';
 
 export class BookController {
   async getAllBooks(request: FastifyRequest, reply: FastifyReply) {
@@ -12,11 +11,12 @@ export class BookController {
       const response: ApiResponse<any> = {
         success: true,
         data: result,
+        timestamp: new Date().toISOString(),
       };
 
       return reply.status(200).send(response);
-    } catch (error) {
-      this.handleError(error, reply);
+    } catch (error: any) {
+      return this.handleError(error, reply);
     }
   }
 
@@ -31,6 +31,7 @@ export class BookController {
           error: 'Not Found',
           message: 'Book not found',
           statusCode: 404,
+          timestamp: new Date().toISOString(),
         };
         return reply.status(404).send(errorResponse);
       }
@@ -38,11 +39,12 @@ export class BookController {
       const response: ApiResponse<any> = {
         success: true,
         data: book,
+        timestamp: new Date().toISOString(),
       };
 
       return reply.status(200).send(response);
-    } catch (error) {
-      this.handleError(error, reply);
+    } catch (error: any) {
+      return this.handleError(error, reply);
     }
   }
 
@@ -55,11 +57,12 @@ export class BookController {
         success: true,
         data: book,
         message: 'Book created successfully',
+        timestamp: new Date().toISOString(),
       };
 
       return reply.status(201).send(response);
-    } catch (error) {
-      this.handleError(error, reply);
+    } catch (error: any) {
+      return this.handleError(error, reply);
     }
   }
 
@@ -74,6 +77,7 @@ export class BookController {
           error: 'Not Found',
           message: 'Book not found',
           statusCode: 404,
+          timestamp: new Date().toISOString(),
         };
         return reply.status(404).send(errorResponse);
       }
@@ -82,11 +86,12 @@ export class BookController {
         success: true,
         data: book,
         message: 'Book updated successfully',
+        timestamp: new Date().toISOString(),
       };
 
       return reply.status(200).send(response);
-    } catch (error) {
-      this.handleError(error, reply);
+    } catch (error: any) {
+      return this.handleError(error, reply);
     }
   }
 
@@ -101,6 +106,7 @@ export class BookController {
           error: 'Not Found',
           message: 'Book not found',
           statusCode: 404,
+          timestamp: new Date().toISOString(),
         };
         return reply.status(404).send(errorResponse);
       }
@@ -109,11 +115,12 @@ export class BookController {
         success: true,
         data: null,
         message: 'Book deleted successfully',
+        timestamp: new Date().toISOString(),
       };
 
       return reply.status(200).send(response);
-    } catch (error) {
-      this.handleError(error, reply);
+    } catch (error: any) {
+      return this.handleError(error, reply);
     }
   }
 
@@ -128,6 +135,7 @@ export class BookController {
           error: 'Not Found',
           message: 'Book not found',
           statusCode: 404,
+          timestamp: new Date().toISOString(),
         };
         return reply.status(404).send(errorResponse);
       }
@@ -136,11 +144,12 @@ export class BookController {
         success: true,
         data: null,
         message: 'Book soft deleted successfully',
+        timestamp: new Date().toISOString(),
       };
 
       return reply.status(200).send(response);
-    } catch (error) {
-      this.handleError(error, reply);
+    } catch (error: any) {
+      return this.handleError(error, reply);
     }
   }
 
@@ -150,11 +159,12 @@ export class BookController {
       const restored = await bookService.restore(id);
 
       if (!restored) {
-        const errorResponse = {
+        const errorResponse: ErrorResponse = {
           success: false,
           error: 'Not Found',
           message: 'Book not found',
           statusCode: 404,
+          timestamp: new Date().toISOString(),
         };
         return reply.status(404).send(errorResponse);
       }
@@ -163,11 +173,12 @@ export class BookController {
         success: true,
         data: null,
         message: 'Book restored successfully',
+        timestamp: new Date().toISOString(),
       };
 
       return reply.status(200).send(response);
-    } catch (error) {
-      this.handleError(error, reply);
+    } catch (error: any) {
+      return this.handleError(error, reply);
     }
   }
 
@@ -179,6 +190,7 @@ export class BookController {
       error: 'Internal Server Error',
       message: error.message || 'An unexpected error occurred',
       statusCode: 500,
+      timestamp: new Date().toISOString(),
     };
 
     if (error.message.includes('already exists')) {

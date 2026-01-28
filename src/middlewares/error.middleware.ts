@@ -27,6 +27,7 @@ export const errorHandler = (
     error: error.name || 'Error',
     message,
     statusCode,
+    timestamp: new Date().toISOString(),
     ...(process.env.NODE_ENV === 'development' && { stack: error.stack }),
   });
 };
@@ -40,5 +41,6 @@ export const notFoundHandler = (
     error: 'Not Found',
     message: `Route ${request.method} ${request.url} not found`,
     statusCode: 404,
+    timestamp: new Date().toISOString(),
   });
 };

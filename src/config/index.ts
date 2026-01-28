@@ -27,6 +27,8 @@ const configSchema = z.object({
   DB_SSL: z.coerce.boolean().default(false),
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
   API_PREFIX: z.string().default('/api/v1'),
+  CORS_ORIGIN: z.string().optional(),
+  CORS_CREDENTIALS: z.coerce.boolean().optional().default(true),
 });
 
 export type Config = z.infer<typeof configSchema>;
@@ -37,4 +39,3 @@ export const config: Config = configSchema.parse(process.env);
 console.log(`Environment: ${config.NODE_ENV}`);
 console.log(`Server: ${config.HOST}:${config.PORT}`);
 console.log(`Database: ${config.DB_HOST}:${config.DB_PORT}/${config.DB_NAME}`);
-console.log(`Database User: ${config.DB_USER}`);

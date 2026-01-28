@@ -19,8 +19,10 @@ export async function createApp(): Promise<FastifyInstance> {
 
   // Register plugins
   await app.register(cors, {
-    origin: config.NODE_ENV === 'development' ? '*' : false,
-    credentials: true,
+    origin: config.CORS_ORIGIN 
+      ? config.CORS_ORIGIN.split(',') 
+      : config.NODE_ENV === 'development' ? '*' : false,
+    credentials: config.CORS_CREDENTIALS,
   });
 
   await app.register(helmet, {

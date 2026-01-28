@@ -10,6 +10,7 @@ export const sendSuccess = (
     success: true,
     data,
     message,
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -24,5 +25,6 @@ export const sendError = (
     error,
     message,
     statusCode,
+    timestamp: new Date().toISOString(),
   });
 };

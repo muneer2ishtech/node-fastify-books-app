@@ -3,7 +3,7 @@ export interface Book {
   title: string;
   author: string;
   year: number;
-  price: string; // Use string for numeric to preserve precision
+  price: string;
   is_active: boolean;
   description?: string | null;
   created_at: Date;
@@ -48,7 +48,7 @@ export interface ApiResponse<T> {
   success: boolean;
   data: T;
   message?: string;
-  error?: string;
+  timestamp: string;
 }
 
 export interface ErrorResponse {
@@ -56,4 +56,5 @@ export interface ErrorResponse {
   error: string;
   message: string;
   statusCode: number;
+  timestamp: string;
 }

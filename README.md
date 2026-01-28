@@ -74,6 +74,12 @@ npm run docker:up
 1. Install dependencies:
 
 ```
+rm -rf dist/
+rm -f package-lock.json
+rm -rf node_modules/
+```
+
+```
 npm install
 ```
 
