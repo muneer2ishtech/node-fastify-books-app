@@ -10,7 +10,7 @@ const dbConfig: PoolConfig = {
   database: config.DB_NAME,
   ssl: config.DB_SSL ? { rejectUnauthorized: false } : false,
   max: config.NODE_ENV === 'production' ? 20 : 10,
-  idleTimeoutMillis: 30000,
+  idleTimeoutMillis: config.DB_IDLE_TIMEOUT_MS,
   connectionTimeoutMillis: config.NODE_ENV === 'production' ? 5000 : 2000,
 };
 

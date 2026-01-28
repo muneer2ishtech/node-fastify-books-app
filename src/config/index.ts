@@ -25,6 +25,7 @@ const configSchema = z.object({
   DB_PASSWORD: z.string(),
   DB_NAME: z.string(),
   DB_SSL: z.coerce.boolean().default(false),
+  DB_IDLE_TIMEOUT_MS: z.coerce.number().default(30000),
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
   API_PREFIX: z.string().default('/api/v1'),
   CORS_ORIGIN: z.string().optional(),
