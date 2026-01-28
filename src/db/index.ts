@@ -11,6 +11,7 @@ const dbConfig: PoolConfig = {
   max: config.NODE_ENV === 'production' ? 20 : 10,
   idleTimeoutMillis: config.DB_IDLE_TIMEOUT_MS,
   connectionTimeoutMillis: config.NODE_ENV === 'production' ? 5000 : 2000,
+  // No SSL for local development
 };
 
 class Database {
@@ -18,6 +19,13 @@ class Database {
   private static instance: Database;
 
   private constructor() {
+    logger.debug('Database configuration:', {
+      host: config.DB_HOST,
+      port: config.DB_PORT,
+      database: config.DB_NAME,
+      user: config.DB_USER,
+    });
+    
     this.pool = new Pool(dbConfig);
     this.setupEventListeners();
   }
@@ -30,14 +38,14 @@ class Database {
   }
 
   private setupEventListeners(): void {
-    this.pool.on('connect', () => {
+    this.pool.on('connect', (client) => {
       logger.debug('Database connection established');
       // Set the schema for all queries on this connection
       client.query('SET search_path TO bookapp_dev_schema, public');
     });
 
     this.pool.on('error', (err) => {
-      logger.error('Unexpected database error', err);
+      logger.error('Unexpected database pool error:', err.message);
     });
 
     this.pool.on('remove', () => {
@@ -51,23 +59,31 @@ class Database {
       const result = await this.pool.query(text, params);
       const duration = Date.now() - start;
       
-      // Only log slow queries in production
       if (duration > 1000 && config.NODE_ENV === 'production') {
-        logger.warn('Slow query detected', { text, duration, rows: result.rowCount });
+        logger.warn('Slow query detected', { duration, rows: result.rowCount });
       }
       
       return result;
-    } catch (error) {
-      logger.error('Error executing query', { text, params, error });
+    } catch (error: any) {
+      logger.error('Error executing query', { 
+        query: text.substring(0, 100),
+        error: error.message,
+        code: error.code,
+      });
       throw error;
     }
   }
 
   async connect(): Promise<void> {
     try {
-      await this.pool.connect();
-      logger.info('Database connected successfully');
-    } catch (error) {
+      // Test connection with a simple query
+      const client = await this.pool.connect();
+      const result = await client.query('SELECT version()');
+      client.release();
+      
+      logger.info(`Database connected successfully to ${config.DB_HOST}:${config.DB_PORT}/${config.DB_NAME}`);
+      logger.debug(`PostgreSQL version: ${result.rows[0]?.version}`);
+    } catch (error: any) {
       logger.error('Database connection failed', { 
         error: error.message,
         host: config.DB_HOST,
@@ -75,8 +91,7 @@ class Database {
         database: config.DB_NAME,
         user: config.DB_USER,
       });
-  
-      throw error;
+      throw new Error(`Database connection failed: ${error.message}`);
     }
   }
 
@@ -84,8 +99,8 @@ class Database {
     try {
       await this.pool.end();
       logger.info('Database disconnected');
-    } catch (error) {
-      logger.error('Error disconnecting from database', error);
+    } catch (error: any) {
+      logger.error('Error disconnecting from database', error.message);
       throw error;
     }
   }
