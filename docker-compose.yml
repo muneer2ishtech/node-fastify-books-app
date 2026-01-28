@@ -1,49 +1,54 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: book_db
-    environment:
-      POSTGRES_USER: book_user
-      POSTGRES_PASSWORD: book_password
-      POSTGRES_DB: book_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./src/db/migrations:/docker-entrypoint-initdb.d
-    networks:
-      - book_network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U book_user -d book_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
-  api:
+  ishtech-node-fastify-books-app:
     build: .
-    container_name: book_api
+    container_name: ishtech_node_fastify_books_app
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_USER: book_user
-      DB_PASSWORD: book_password
-      DB_NAME: book_db
+      DB_USER: bookapp_dev_user
+      DB_PASSWORD: bookapp_dev_pass
+      DB_NAME: ishtech_dev_db
       DB_SSL: "false"
+      LOG_LEVEL: info
+      API_PREFIX: /api/v1
     depends_on:
-      postgres:
+      ishtech-node-fastify-books-postgres:
         condition: service_healthy
     networks:
-      - book_network
-    restart: unless-stopped
+      - ishtech-node-fastify-books-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${SERVER_PORT_LOCAL:-${SERVER_PORT:-8080}}/actuator/health"]
+      start_period: 60s
+
+  ishtech-node-fastify-books-postgres:
+    image: postgres:18
+    container_name: ishtech_node_fastify_books_postgres
+    environment:
+      - POSTGRES_DB=ishtech_dev_db
+      - POSTGRES_USER=ishtech_dev_user
+      - POSTGRES_PASSWORD=ishtech_dev_pass
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - ishtech_node_fastify_books_postgres_data:/var/lib/postgresql/18/data
+      - ./src/test/resources/db/init_db.sql:/docker-entrypoint-initdb.d/bookapp_dev_init_db.sql
+    networks:
+      - ishtech-node-fastify-books-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      start_period: 45s
 
 volumes:
-  postgres_data:
+  ishtech_node_fastify_books_postgres_data:
 
 networks:
-  book_network:
+  ishtech-node-fastify-books-network:
     driver: bridge
