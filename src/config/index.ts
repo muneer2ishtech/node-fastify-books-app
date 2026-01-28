@@ -1,7 +1,19 @@
 import dotenv from 'dotenv';
 import { z } from 'zod';
+import path from 'path';
 
-dotenv.config();
+// Determine environment
+const env = process.env.NODE_ENV || 'development';
+const envFile = `.env.${env}`;
+
+// Load environment file
+const envPath = path.resolve(process.cwd(), envFile);
+dotenv.config({ path: envPath });
+
+// Fallback to .env if specific env file not found
+if (process.env.NODE_ENV === undefined) {
+  dotenv.config();
+}
 
 const configSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
@@ -20,3 +32,9 @@ const configSchema = z.object({
 export type Config = z.infer<typeof configSchema>;
 
 export const config: Config = configSchema.parse(process.env);
+
+// Log configuration (sensitive data masked)
+console.log(`Environment: ${config.NODE_ENV}`);
+console.log(`Server: ${config.HOST}:${config.PORT}`);
+console.log(`Database: ${config.DB_HOST}:${config.DB_PORT}/${config.DB_NAME}`);
+console.log(`Database User: ${config.DB_USER}`);

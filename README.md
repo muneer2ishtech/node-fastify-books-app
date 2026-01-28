@@ -19,6 +19,11 @@ A high-performance RESTful API for book management built with Node.js, TypeScrip
 - PostgreSQL 15+
 - Docker & Docker Compose (optional)
 
+## Project structure
+
+[GIT](https://github.com/muneer2ishtech/node-fastify-books-app/)
+
+```
 node-fastify-books-app/
 ├── src/
 │ ├── app.ts
@@ -53,56 +58,76 @@ node-fastify-books-app/
 ├── tsconfig.json
 ├── .env.example
 └── README.md
+```
 
 ## Quick Start
 
-### Using Docker (Recommended)
+### Using Docker
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd node-fastify-books-app
-
----
 Start the application:
 
+```
 npm run docker:up
+```
 
-
-Local Development
+### Local Development
 1. Install dependencies:
+
+```
 npm install
+```
 
 2. Set up environment variables:
+    - Edit .env with your database credentials
+
+```
 cp .env.example .env
-# Edit .env with your database credentials
+```
 
 3. Run database migrations:
+
+```
 npm run migrate up
+```
 
 4. Start the development server:
-npm run dev
 
-API Documentation
+```
+npm run dev
+```
+
+## Build for production
+
+```
+npm run build
+```
+
+### Run production build (set environment variables first)
+
+```
+NODE_ENV=production DB_HOST=... DB_USER=... DB_PASSWORD=... npm start
+```
+
+## API Documentation
 Once the server is running, visit:
 
 API Documentation: http://localhost:3000/documentation
 
 Health Check: http://localhost:3000/health
 
-Available Scripts
-npm run dev - Start development server with hot reload
-npm run build - Build for production
-npm start - Start production server
-npm test - Run tests
-npm run lint - Run ESLint
-npm run docker:up - Start with Docker Compose
-npm run docker:down - Stop Docker containers
+### API Endpoints
 
-API Endpoints
-Books
-GET /api/v1/books - Get all books with pagination
-GET /api/v1/books/:id - Get book by ID
-POST /api/v1/books - Create new book
-PUT /api/v1/books/:id - Update existing book
-DELETE /api/v1/books/:id - Delete book
+- GET `/api/v1/books` - Get all books with pagination
+- GET `/api/v1/books/:id` - Get book by ID
+- POST `/api/v1/books` - Create new book
+- PUT `/api/v1/books/:id` - Update existing book
+- DELETE `/api/v1/books/:id` - Delete book
+
+## Available Scripts
+- `npm run dev` - Start development server with hot reload
+- `npm run build - Build for production
+- `npm start` - Start production server
+- `npm test` - Run tests
+- `npm run lint` - Run ESLint
+- `npm run docker:up` - Start with Docker Compose
+- `npm run docker:down` - Stop Docker containers

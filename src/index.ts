@@ -12,17 +12,14 @@ async function startServer() {
     });
 
     logger.info(`Server running on http://${config.HOST}:${config.PORT}`);
-    logger.info(`API Documentation available on http://${config.HOST}:${config.PORT}/documentation`);
     logger.info(`Environment: ${config.NODE_ENV}`);
+    
+    // Production-specific logging
+    if (config.NODE_ENV === 'production') {
+      logger.info('Production mode enabled');
+      logger.info(`API Documentation: http://${config.HOST}:${config.PORT}/documentation`);
+    }
 
-    // Log available routes
-    app.ready(() => {
-      const routes = app.routes.map(route => ({
-        method: route.method,
-        url: route.url,
-      }));
-      logger.debug('Registered routes:', { routes });
-    });
   } catch (error) {
     logger.error('Failed to start server:', error);
     process.exit(1);

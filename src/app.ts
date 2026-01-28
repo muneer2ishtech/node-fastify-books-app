@@ -14,63 +14,51 @@ export async function createApp(): Promise<FastifyInstance> {
     logger: false,
     trustProxy: true,
     bodyLimit: 1048576, // 1MB
+    disableRequestLogging: config.NODE_ENV === 'production',
   });
 
   // Register plugins
   await app.register(cors, {
-    origin: true,
+    origin: config.NODE_ENV === 'development' ? '*' : false,
     credentials: true,
   });
 
   await app.register(helmet, {
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'"],
-      },
-    },
+    contentSecurityPolicy: config.NODE_ENV === 'production',
   });
 
-  // Swagger documentation
-  await app.register(swagger, {
-    openapi: {
-      info: {
-        title: 'Book Management API',
-        description: 'High-performance Book Management API with Node.js, TypeScript, and Fastify',
-        version: '1.0.0',
-      },
-      servers: [
-        {
-          url: `http://localhost:${config.PORT}${config.API_PREFIX}`,
-          description: 'Development server',
+  // Swagger - only in development
+  if (config.NODE_ENV === 'development') {
+    await app.register(swagger, {
+      openapi: {
+        info: {
+          title: 'Book Management API',
+          description: 'High-performance Book Management API',
+          version: '1.0.0',
         },
-      ],
-      tags: [
-        {
-          name: 'Books',
-          description: 'Book related endpoints',
-        },
-      ],
-      components: {
-        securitySchemes: {
-          bearerAuth: {
-            type: 'http',
-            scheme: 'bearer',
-            bearerFormat: 'JWT',
+        servers: [
+          {
+            url: `http://${config.HOST}:${config.PORT}${config.API_PREFIX}`,
+            description: `${config.NODE_ENV} server`,
           },
-        },
+        ],
+        tags: [
+          {
+            name: 'Books',
+            description: 'Book related endpoints',
+          },
+        ],
       },
-    },
-  });
+    });
 
-  await app.register(swaggerUi, {
-    routePrefix: '/documentation',
-    uiConfig: {
-      docExpansion: 'list',
-      deepLinking: false,
-    },
-  });
+    await app.register(swaggerUi, {
+      routePrefix: '/documentation',
+      uiConfig: {
+        docExpansion: 'list',
+        deepLinking: false,
+      },
+    });
+  }
 
   // Database connection
   try {
@@ -83,11 +71,25 @@ export async function createApp(): Promise<FastifyInstance> {
 
   // Health check endpoint
   app.get('/health', async () => {
-    return {
-      status: 'OK',
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
-    };
+    try {
+      await db.query('SELECT 1');
+      return {
+        status: 'OK',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        environment: config.NODE_ENV,
+        database: 'connected',
+      };
+    } catch (error) {
+      logger.error('Health check failed:', error);
+      return {
+        status: 'ERROR',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        environment: config.NODE_ENV,
+        database: 'disconnected',
+      };
+    }
   });
 
   // API routes

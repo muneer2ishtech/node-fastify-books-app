@@ -1,0 +1,28 @@
+# Server Configuration
+NODE_ENV=test
+PORT=3001
+HOST=0.0.0.0
+API_PREFIX=/api/v1
+
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=15432
+DB_USER=bookapp_test_user
+DB_PASSWORD=bookapp_test_pass
+DB_NAME=ishtech_test_db
+DB_SSL=false
+
+# Connection Pool Settings
+DB_MAX_CONNECTIONS=5
+DB_IDLE_TIMEOUT_MS=10000
+DB_CONNECTION_TIMEOUT_MS=1000
+
+# Logging
+LOG_LEVEL=trace
+
+# Security
+JWT_SECRET=test-secret-key
+TOKEN_EXPIRY=1h
+
+# Test Settings
+TEST_TIMEOUT=10000

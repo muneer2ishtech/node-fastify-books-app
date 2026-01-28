@@ -9,9 +9,9 @@ const dbConfig: PoolConfig = {
   password: config.DB_PASSWORD,
   database: config.DB_NAME,
   ssl: config.DB_SSL ? { rejectUnauthorized: false } : false,
-  max: 20,
+  max: config.NODE_ENV === 'production' ? 20 : 10,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+  connectionTimeoutMillis: config.NODE_ENV === 'production' ? 5000 : 2000,
 };
 
 class Database {
@@ -49,7 +49,12 @@ class Database {
     try {
       const result = await this.pool.query(text, params);
       const duration = Date.now() - start;
-      logger.debug('Executed query', { text, duration, rows: result.rowCount });
+      
+      // Only log slow queries in production
+      if (duration > 1000 && config.NODE_ENV === 'production') {
+        logger.warn('Slow query detected', { text, duration, rows: result.rowCount });
+      }
+      
       return result;
     } catch (error) {
       logger.error('Error executing query', { text, params, error });
