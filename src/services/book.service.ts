@@ -11,8 +11,8 @@ export class BookService {
       year,
       author,
       is_active = true,
-      sort_by = 'created_at',
-      sort_order = 'desc',
+      sort_by = 'title',
+      sort_order = 'asc',
     } = queryParams;
 
     const offset = (page - 1) * limit;
@@ -43,8 +43,8 @@ export class BookService {
     }
 
     // Validate sort_by to prevent SQL injection
-    const validSortColumns = ['title', 'author', 'year', 'price', 'created_at', 'updated_at'];
-    const sortColumn = validSortColumns.includes(sort_by) ? sort_by : 'created_at';
+    const validSortColumns = ['id', 'title', 'author', 'year', 'price'];
+    const sortColumn = validSortColumns.includes(sort_by) ? sort_by : 'title';
     const sortDirection = sort_order === 'asc' ? 'ASC' : 'DESC';
 
     query += ` ORDER BY ${sortColumn} ${sortDirection}`;
