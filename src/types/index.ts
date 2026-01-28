@@ -6,8 +6,6 @@ export interface Book {
   price: string;
   is_active: boolean;
   description?: string | null;
-  created_at: Date;
-  updated_at: Date;
 }
 
 export interface BookCreateInput {
