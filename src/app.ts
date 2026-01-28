@@ -40,7 +40,7 @@ export async function createApp(): Promise<FastifyInstance> {
         },
         servers: [
           {
-            url: `http://${config.HOST}:${config.PORT}${config.API_PREFIX}`,
+            url: `http://${config.HOST}:${config.PORT}`,
             description: `${config.NODE_ENV} server`,
           },
         ],
@@ -54,7 +54,7 @@ export async function createApp(): Promise<FastifyInstance> {
     });
 
     await app.register(swaggerUi, {
-      routePrefix: '/documentation',
+      routePrefix: '/swagger-ui',
       uiConfig: {
         docExpansion: 'list',
         deepLinking: false,
