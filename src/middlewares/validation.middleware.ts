@@ -20,8 +20,8 @@ export const bookQuerySchema = z.object({
   year: z.coerce.number().int().optional(),
   author: z.string().optional(),
   is_active: z.coerce.boolean().optional().default(true),
-  sort_by: z.enum(['title', 'author', 'year', 'price', 'created_at']).optional().default('created_at'),
-  sort_order: z.enum(['asc', 'desc']).optional().default('desc'),
+  sort_by: z.enum(['id', 'title', 'author', 'year', 'price']).optional().default('title'),
+  sort_order: z.enum(['asc', 'desc']).optional().default('asc'),
 });
 
 export const idParamSchema = z.object({

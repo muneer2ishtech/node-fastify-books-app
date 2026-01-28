@@ -30,7 +30,7 @@ export interface BookQueryParams {
   year?: number;
   author?: string;
   is_active?: boolean;
-  sort_by?: 'title' | 'author' | 'year' | 'price' | 'created_at';
+  sort_by?: 'id' | 'title' | 'author' | 'year' | 'price';
   sort_order?: 'asc' | 'desc';
 }
 

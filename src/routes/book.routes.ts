@@ -23,10 +23,10 @@ export async function bookRoutes(fastify: FastifyInstance) {
           is_active: { type: 'boolean', default: true },
           sort_by: { 
             type: 'string', 
-            enum: ['title', 'author', 'year', 'price', 'created_at'],
-            default: 'created_at'
+            enum: ['id', 'title', 'author', 'year', 'price'],
+            default: 'title'
           },
-          sort_order: { type: 'string', enum: ['asc', 'desc'], default: 'desc' },
+          sort_order: { type: 'string', enum: ['asc', 'desc'], default: 'asc' },
         },
       },
       response: {
