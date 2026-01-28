@@ -18,7 +18,7 @@ export class BookService {
     const offset = (page - 1) * limit;
 
     let query = `
-      SELECT * FROM t_book 
+      SELECT * FROM bookapp_dev_schema.t_book 
       WHERE is_active = $1
     `;
     const params: any[] = [is_active];
@@ -57,7 +57,7 @@ export class BookService {
     ]);
 
     const total = countResult.rows[0].count;
-    const totalPages = Math.ceil(total / limit);
+    const totalPages = Math.ceil(Number(total) / limit);
 
     return {
       data: booksResult.rows.map(BookEntity.mapRowToBook),
@@ -73,7 +73,7 @@ export class BookService {
   private async getTotalCount(queryParams: BookQueryParams): Promise<{ rows: { count: string }[] }> {
     const { search, year, author, is_active = true } = queryParams;
 
-    let query = `SELECT COUNT(*) FROM t_book WHERE is_active = $1`;
+    let query = `SELECT COUNT(*) FROM bookapp_dev_schema.t_book WHERE is_active = $1`;
     const params: any[] = [is_active];
     let paramIndex = 2;
 
@@ -99,7 +99,7 @@ export class BookService {
   }
 
   async findById(id: bigint): Promise<Book | null> {
-    const query = 'SELECT * FROM t_book WHERE id = $1';
+    const query = 'SELECT * FROM bookapp_dev_schema.t_book WHERE id = $1';
     const result = await db.query(query, [id]);
 
     if (result.rows.length === 0) {
@@ -113,7 +113,7 @@ export class BookService {
     BookEntity.validateBookCreateInput(bookData);
 
     const query = `
-      INSERT INTO t_book (title, author, year, price, description, is_active)
+      INSERT INTO bookapp_dev_schema.t_book (title, author, year, price, description, is_active)
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *
     `;
@@ -156,7 +156,7 @@ export class BookService {
 
     params.push(id);
     const query = `
-      UPDATE t_book 
+      UPDATE bookapp_dev_schema.t_book 
       SET ${updates.join(', ')}, updated_at = CURRENT_TIMESTAMP
       WHERE id = $${paramIndex}
       RETURNING *
@@ -174,19 +174,19 @@ export class BookService {
   }
 
   async delete(id: bigint): Promise<boolean> {
-    const query = 'DELETE FROM t_book WHERE id = $1 RETURNING id';
+    const query = 'DELETE FROM bookapp_dev_schema.t_book WHERE id = $1 RETURNING id';
     const result = await db.query(query, [id]);
     return result.rows.length > 0;
   }
 
   async softDelete(id: bigint): Promise<boolean> {
-    const query = 'UPDATE t_book SET is_active = false WHERE id = $1 RETURNING id';
+    const query = 'UPDATE bookapp_dev_schema.t_book SET is_active = false WHERE id = $1 RETURNING id';
     const result = await db.query(query, [id]);
     return result.rows.length > 0;
   }
 
   async restore(id: bigint): Promise<boolean> {
-    const query = 'UPDATE t_book SET is_active = true WHERE id = $1 RETURNING id';
+    const query = 'UPDATE bookapp_dev_schema.t_book SET is_active = true WHERE id = $1 RETURNING id';
     const result = await db.query(query, [id]);
     return result.rows.length > 0;
   }

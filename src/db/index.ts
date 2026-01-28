@@ -32,6 +32,8 @@ class Database {
   private setupEventListeners(): void {
     this.pool.on('connect', () => {
       logger.debug('Database connection established');
+      // Set the schema for all queries on this connection
+      client.query('SET search_path TO bookapp_dev_schema, public');
     });
 
     this.pool.on('error', (err) => {
