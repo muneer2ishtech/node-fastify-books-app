@@ -67,7 +67,14 @@ class Database {
       await this.pool.connect();
       logger.info('Database connected successfully');
     } catch (error) {
-      logger.error('Database connection failed', error);
+      logger.error('Database connection failed', { 
+        error: error.message,
+        host: config.DB_HOST,
+        port: config.DB_PORT,
+        database: config.DB_NAME,
+        user: config.DB_USER,
+      });
+  
       throw error;
     }
   }
