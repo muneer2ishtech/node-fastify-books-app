@@ -8,7 +8,6 @@ const dbConfig: PoolConfig = {
   user: config.DB_USER,
   password: config.DB_PASSWORD,
   database: config.DB_NAME,
-  ssl: config.DB_SSL ? { rejectUnauthorized: false } : false,
   max: config.NODE_ENV === 'production' ? 20 : 10,
   idleTimeoutMillis: config.DB_IDLE_TIMEOUT_MS,
   connectionTimeoutMillis: config.NODE_ENV === 'production' ? 5000 : 2000,
